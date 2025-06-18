@@ -1,0 +1,20 @@
+{
+  "name": "bluepocket",
+  "version": "0.0.0",
+  "description": "Bluepocket monorepo",
+  "repository": "git@github.com:sprisa/bluepocket.git",
+  "author": "Gabriel Meola <hey@gabe.mx>",
+  "license": "Mozilla Public License Version 2.0",
+  "private": true,
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "lint": "biome check"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "typescript": "^5.8.3"
+  }
+}
