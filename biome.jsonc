@@ -36,6 +36,10 @@
       "suspicious": {
         "noArrayIndexKey": "info",
         "noExplicitAny": "off"
+      },
+      "a11y": {
+        "useButtonType": "off",
+        "noBlankTarget": "off"
       }
     }
   },

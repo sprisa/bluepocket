@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@atproto/api": "^0.15.16",
+    "js-sha256": "^0.11.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
