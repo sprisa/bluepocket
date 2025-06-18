@@ -1,2 +1,3 @@
-# bluepocket
+# BluePocket
+
 Pocket on Bluesky
