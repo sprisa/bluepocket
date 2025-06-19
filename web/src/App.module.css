@@ -46,3 +46,11 @@
   max-width: var(--maxWidth);
   margin: 0 auto;
 }
+
+.sidebar {
+  padding-top: 16px;
+}
+
+.content {
+  flex: 1;
+}

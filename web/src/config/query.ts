@@ -13,3 +13,18 @@ export function useViewerQuery() {
     },
   });
 }
+
+export function useSavesQuery() {
+  return useSuspenseQuery({
+    queryKey: ["savesQuery", 1],
+    queryFn: () => {
+      return agent.com.atproto.repo.listRecords({
+        repo: agent.assertDid,
+        // TODO: Need to save open graph info such as title, image, author, and subtitle.
+        // collection: "org.bluepocket.v1.save",
+        collection: "org.bluepocket.v1.saves",
+        limit: 50,
+      });
+    },
+  });
+}
