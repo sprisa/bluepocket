@@ -6,7 +6,7 @@
   "author": "Gabriel Meola <hey@gabe.mx>",
   "license": "Mozilla Public License Version 2.0",
   "private": true,
-  "packageManager": "pnpm@10.11.0",
+  "packageManager": "pnpm@10.12.1",
   "engines": {
     "node": ">=24"
   },

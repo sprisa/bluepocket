@@ -24,7 +24,8 @@
         "useTemplate": "off",
         "useExponentiationOperator": "off",
         "noParameterAssign": "off",
-        "useSelfClosingElements": "off"
+        "useSelfClosingElements": "off",
+        "noNonNullAssertion": "off"
       },
       "complexity": {
         "noForEach": "off",
