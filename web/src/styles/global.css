@@ -1,0 +1,40 @@
+@import url("./normalize.css");
+@import url("./reset.css");
+
+:root {
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
+    Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+  --blue: #3A83F7;
+}
+
+body {
+  font-family: var(--font);
+  color: #171717;
+  box-sizing: border-box;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: #fff1e0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+input {
+  font-family: var(--font);
+  border: 0;
+}
+
+button {
+  cursor: pointer;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: initial;
+}

@@ -1,0 +1,41 @@
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.link {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  width: 150px;
+
+  &:hover {
+    color: var(--blue);
+  }
+}
+
+.activeLink {
+  color: var(--blue);
+  background-color: rgb(from var(--blue) r g b / 10%);
+  border-radius: 4px;
+}
+
+.section {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionHeader {
+  display: flex;
+  gap: 16px;
+  padding-left: 8px;
+}
+
+.sectionName {
+  font-weight: 500;
+  color: rgb(102, 99, 92);
+}
