@@ -6,6 +6,7 @@
     Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
   --blue: #3A83F7;
+  --background: #fff1e0;
 }
 
 body {
@@ -14,7 +15,7 @@ body {
   box-sizing: border-box;
   font-size: 16px;
   line-height: 1.5;
-  background-color: #fff1e0;
+  background-color: var(--background);
 }
 
 *,

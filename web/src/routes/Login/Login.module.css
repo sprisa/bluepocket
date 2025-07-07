@@ -1,0 +1,156 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 40px;
+  padding: 0 32px;
+
+  @media (max-width: 700px) {
+    flex-direction: column;
+  }
+}
+
+.header {
+  max-width: 400px;
+
+  h1 {
+    position: absolute;
+    top: 16px;
+    font-size: 24px;
+    color: var(--blue);
+
+    @media (max-width: 700px) {
+      position: relative;
+    }
+  }
+
+  h2 {
+    font-weight: 800;
+    color: var(--blue);
+    text-align: right;
+    font-size: 54px;
+  }
+
+  h3 {
+    font-weight: 600;
+    font-size: 17px;
+    color: rgb(100, 101, 102);
+    text-align: right;
+  }
+
+  @media (max-width: 700px) {
+    h1,
+    h2,
+    h3 {
+      text-align: center;
+    }
+  }
+}
+
+.divider {
+  border-right-width: 1px;
+  border-style: solid;
+  border-color: rgba(159, 159, 159, 0.672);
+  height: 100%;
+  width: 1px;
+
+  @media (max-width: 700px) {
+    border-right-width: 0;
+    border-top-width: 1px;
+    height: 1px;
+    width: 100%;
+  }
+}
+
+.formWrapper {
+  flex: 1;
+  max-width: 450px;
+  min-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-weight: 500;
+    color: rgb(100, 101, 102);
+  }
+
+  button {
+    border-radius: 8px;
+    padding: 12px 16px;
+    background-color: var(--blue);
+    color: #fff;
+
+    &:disabled {
+      background-color: hsl(from var(--blue) h s l / 0.5);
+      cursor: wait;
+    }
+  }
+}
+
+.inputWrapper {
+}
+
+.input {
+  padding: 8px 16px;
+  border-radius: 10px;
+  height: 45px;
+  width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 12px 0px;
+  border: 1px solid rgb(185, 185, 185);
+  font-size: 16px;
+}
+
+.errorMsg {
+  color: rgb(241, 243, 245);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: rgb(230, 11, 62);
+}
+
+.createAccount {
+  display: flex;
+  flex-direction: column;
+
+  a {
+    padding-top: 32px;
+    border-radius: 8px;
+    padding: 8px 16px;
+    background-color: rgb(22, 30, 39);
+    color: #fff;
+    text-align: center;
+  }
+}
+
+.createAccountDivider {
+  position: relative;
+  height: 40px;
+  margin-top: 13px;
+  width: 100%;
+
+  div {
+    border-top: 1px solid rgba(159, 159, 159, 0.672);
+    height: 1px;
+    width: 100%;
+  }
+
+  span {
+    position: absolute;
+    margin: 0 auto;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--background);
+    padding: 0 16px;
+    white-space: nowrap;
+  }
+}

@@ -4,15 +4,19 @@ import { sha256 } from "js-sha256";
 
 export const queryClient = new QueryClient();
 
-export function useViewerQuery() {
+export function useProfileQuery(id: string) {
   return useSuspenseQuery({
-    queryKey: ["profileQuery"],
+    queryKey: ["profileQuery", id],
     queryFn: () => {
       return agent.getProfile({
-        actor: agent.assertDid,
+        actor: id,
       });
     },
   });
+}
+
+export function useViewerQuery() {
+  return useProfileQuery(agent.assertDid);
 }
 
 export function useSavesQuery() {
