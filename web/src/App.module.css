@@ -28,6 +28,16 @@
   }
 }
 
+.headerRight {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.linkBtn {
+  display: flex;
+}
+
 .profileBtn {
   --size: 32px;
   border-radius: var(--size);
@@ -53,4 +63,49 @@
 
 .content {
   flex: 1;
+}
+
+.addLinkInput {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-end;
+  padding-left: 48px;
+
+  input {
+    padding: 8px 16px;
+    border-radius: 10px;
+    height: 45px;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 12px 0px;
+    border: 1px solid rgb(185, 185, 185);
+    font-size: 16px;
+    padding-left: 32px;
+  }
+
+  button {
+    border-radius: 8px;
+    padding: 12px 16px;
+    background-color: var(--blue);
+    color: #fff;
+
+    &:disabled {
+      background-color: hsl(from var(--blue) h s l / 0.5);
+    }
+  }
+}
+
+
+.addLinkInputField {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.addLinkInputIcon {
+  position: absolute;
+  height: 20px;
+  left: 8px;
 }

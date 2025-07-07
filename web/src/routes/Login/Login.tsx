@@ -41,7 +41,6 @@ export function LoginPage({ onLogin }: Props) {
                 onLogin();
               })
               .catch((err: Error) => {
-                console.log("error login", err);
                 setState({ state: "error", msg: err });
               });
           }}

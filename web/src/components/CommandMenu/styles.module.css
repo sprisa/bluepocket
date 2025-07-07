@@ -11,6 +11,11 @@
   justify-content: center;
   align-items: center;
   font-size: 14px;
+
+  border-radius: 8px;
+  padding: 12px 16px;
+  background-color: #fff;
+  color: #fff;
 }
 
 .cmdk {

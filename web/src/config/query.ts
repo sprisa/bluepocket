@@ -33,7 +33,7 @@ export function useSavesQuery() {
   });
 }
 
-export async function saveUrl(urlStr: string) {
+export async function saveUrlMutation(urlStr: string) {
   const url = URL.parse(urlStr);
   if (url == null) return;
   const rkey = sha256(url.href);

@@ -33,6 +33,7 @@ input {
 button {
   cursor: pointer;
   padding: 0;
+  background-color: unset;
 }
 
 a {

@@ -2,7 +2,8 @@ import { Command } from "cmdk";
 import React from "react";
 import styles from "./styles.module.css";
 import { Root, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover";
-import { saveUrl } from "../../config/query";
+import { saveUrlMutation } from "../../config/query";
+import { isLink } from "../../config/util";
 
 export function CommandMenu() {
   const [open, setOpen] = React.useState(false);
@@ -61,7 +62,7 @@ export function CommandMenu() {
             <button
               disabled={!maybeLink}
               onClick={async () => {
-                const res = await saveUrl(value);
+                const res = await saveUrlMutation(value);
 
                 console.log(res);
                 setValue("");
@@ -74,14 +75,4 @@ export function CommandMenu() {
       </PopoverContent>
     </Root>
   );
-}
-
-function isLink(str: string) {
-  try {
-    const url = new URL(str);
-    // console.log(url)
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch (_) {
-    return false;
-  }
 }
