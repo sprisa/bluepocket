@@ -28,7 +28,6 @@ export function LoginPage({ onLogin }: Props) {
             const data = new FormData(ev.currentTarget);
             const username = data.get("username");
             const password = data.get("password");
-            console.log({ username, password });
             if (typeof username !== "string" || typeof password !== "string")
               return;
 
