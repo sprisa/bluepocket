@@ -5,3 +5,35 @@
   padding-bottom: 8px;
   margin-bottom: 16px;
 }
+
+.items {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.item {
+  width: 260px;
+  min-height: 160px;
+  background-color: gray;
+  border-radius: 8px;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 12px 0px;
+  cursor: pointer;
+}
+
+.itemImg {
+  height: 100px;
+  background-color: lightgray;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.itemContent {
+  padding: 8px;
+  font-size: 14px;
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}

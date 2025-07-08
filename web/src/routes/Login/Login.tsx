@@ -51,12 +51,14 @@ export function LoginPage({ onLogin }: Props) {
             name="username"
             placeholder="Username or email address"
             aria-label="Username or email address"
+            autoComplete="username"
           />
           <Input
             name="password"
             placeholder="Password"
             type="password"
             aria-label="Password"
+            autoComplete="current-password"
           />
           <button disabled={state?.state === "pending"}>Sign In</button>
           {state?.state === "error" ? (
