@@ -51,44 +51,28 @@ export function useSavesQuery(): SaveQueryResponse {
   }).data.data.records as SaveQueryResponse;
 }
 
+export function useSaveQuery(id: string): SaveRecord {
+  return useSuspenseQuery({
+    queryKey: ["saveQuery", id],
+    queryFn: () => {
+      return agent.com.atproto.repo.getRecord({
+        repo: agent.assertDid,
+        collection: "org.bluepocket.v1.save",
+        rkey: id,
+      });
+    },
+  }).data.data.value as SaveRecord;
+}
+
 export async function saveUrlMutation(urlStr: string) {
   const url = URL.parse(urlStr);
   if (url == null) return;
+  url.searchParams.delete("utm_source");
   const rkey = sha256(url.href);
-  const { article, image } = await new Promise<{
-    article: ReturnType<Readability["parse"]>;
-    image?: string;
-  }>((resolve) => {
-    const req = new XMLHttpRequest();
-    req.onload = () => {
-      console.log(req);
-      const doc = document.implementation.createHTMLDocument("tmp");
-      doc.body.innerHTML = req.response.contents;
-      const reader = new Readability(doc);
-      console.log("reader", reader);
-      const article = reader.parse();
-      console.log("article", article);
-      const el = doc.querySelector('meta[property="og:image"]') as
-        | HTMLMetaElement
-        | undefined;
-      console.dir(el);
-      resolve({
-        article,
-        image: el?.content,
-      });
-    };
-    let proxyUrl = `https://web.archive.org/web/${url.href}`;
-    // TODO: Use custom CORS proxy
-    // https://github.com/reynaldichernando/Whatever-Origin?tab=readme-ov-file#self-hosting
-    proxyUrl = `https://whateverorigin.org/get?url=${encodeURIComponent(
-      proxyUrl
-    )}`;
-    req.open("GET", proxyUrl);
-    // req.responseType = 'document'
-    // req.responseType = 'text'
-    req.responseType = "json";
-    req.send();
-  });
+  const { article, image } = await fetchArticle(
+    document.implementation.createHTMLDocument("tmp"),
+    url
+  );
 
   return await agent.com.atproto.repo.putRecord({
     repo: agent.assertDid, // The user
@@ -106,5 +90,52 @@ export async function saveUrlMutation(urlStr: string) {
       imageHref: image,
       createdAt: new Date().toISOString(),
     } satisfies SaveRecord,
+  });
+}
+
+export function fetchArticle(doc: Document, url: URL) {
+  return new Promise<{
+    article: ReturnType<Readability["parse"]>;
+    image?: string;
+  }>((resolve) => {
+    const req = new XMLHttpRequest();
+    req.onload = () => {
+      // console.log(req);
+      doc.body.innerHTML = req.response.contents;
+      const reader = new Readability(doc, {
+        keepClasses: true,
+      });
+      // console.log("reader", reader);
+      const article = reader.parse();
+      // console.log("article", article);
+      const el = doc.querySelector('meta[property="og:image"]') as
+        | HTMLMetaElement
+        | undefined;
+      // console.dir(el);
+      resolve({
+        article,
+        image: el?.content,
+      });
+    };
+    let proxyUrl = `https://web.archive.org/web/${url.href}`;
+    // TODO: Use custom CORS proxy
+    // https://github.com/reynaldichernando/Whatever-Origin?tab=readme-ov-file#self-hosting
+    proxyUrl = `https://whateverorigin.org/get?url=${encodeURIComponent(
+      proxyUrl
+    )}`;
+    req.open("GET", proxyUrl);
+    // req.responseType = 'document'
+    // req.responseType = 'text'
+    req.responseType = "json";
+    req.send();
+  });
+}
+
+export function useArticleQuery(docBuffer: Document, url: URL) {
+  return useSuspenseQuery({
+    queryKey: ["saveQuery", url],
+    queryFn: () => {
+      return fetchArticle(docBuffer, url);
+    },
   });
 }

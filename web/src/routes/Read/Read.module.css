@@ -1,0 +1,176 @@
+.page {
+}
+
+.article {
+  pre,
+  code {
+    overflow: scroll;
+    margin: 16px 0;
+    padding: 4px 8px;
+    font-family: "SF Mono", SFMono-Regular, ui-monospace, "DejaVu Sans Mono",
+      Menlo, Consolas, monospace;
+    font-size: 14px;
+  }
+
+  code {
+    position: relative;
+    color: #fff;
+    border-radius: 8px;
+    background-color: rgb(22, 30, 39);
+    white-space-collapse: preserve;
+    white-space: pre;
+
+    /* Blocks highlightjs may have missed */
+    &[data-lang] {
+      display: block;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    object-fit: contain;
+    height: min-content;
+    border-radius: 8px;
+    /* box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 12px 0px; */
+    margin: 16px 0;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  h1,
+  h2,
+  p,
+  i,
+  a {
+    color: rgba(0, 0, 0, 0.84);
+    text-rendering: optimizeLegibility;
+  }
+
+  mark {
+    background: #7dffb3;
+  }
+
+  h1,
+  h2,
+  h3 {
+    &[id] {
+      position: relative;
+
+      &::before {
+        content: "#";
+        display: block;
+        position: absolute;
+        left: -32px;
+      }
+    }
+  }
+
+  h1 {
+    font-size: 48px;
+    text-align: left;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    padding: 0;
+    margin: 56px 0 20px -1.883px;
+    text-align: left;
+    line-height: 34.5px;
+    letter-spacing: -0.45px;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    padding: 0;
+    margin: 56px 0 20px -1.883px;
+    text-align: left;
+    line-height: 34.5px;
+    letter-spacing: -0.45px;
+  }
+
+  h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 56px 0 20px -1.883px;
+  }
+
+  p,
+  i,
+  ol,
+  li {
+    font-size: 20px;
+    letter-spacing: -0.03px;
+    line-height: 1.58;
+  }
+
+  p + p,
+  i,
+  a,
+  ol + ol,
+  li + li {
+    margin-top: 20px;
+  }
+
+  blockquote {
+    font-size: 30px;
+    font-style: italic;
+    letter-spacing: -0.36px;
+    line-height: 44.4px;
+    overflow-wrap: break-word;
+    margin: 55px 0 33px 0;
+    color: rgba(0, 0, 0, 0.68);
+    padding: 0 0 0 50px;
+  }
+
+  ul, ol {
+    padding: 20px 0;
+    padding-left: 24px;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li {
+    /* font-size: 18px; */
+  }
+
+  figcaption,
+  sup {
+    font-size: 12px;
+    margin-bottom: 16px;
+
+    * {
+      font-size: 12px;
+    }
+  }
+
+  ::selection {
+    background-color: lavender;
+  }
+
+  /* TODO: Support Tables */
+  table {
+    margin: 20px 0;
+  }
+
+  /* Wikipedia support */
+  :global(.mwe-math-element-inline) {
+    img {
+      margin: 0;
+    }
+  }
+
+  :global(.mwe-math-element-block) {
+    display: block;
+  }
+}

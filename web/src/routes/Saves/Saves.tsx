@@ -1,7 +1,9 @@
+import { Link } from "react-router";
 import { useSavesQuery, type SaveRecord } from "../../config/query";
 import styles from "./Saves.module.css";
 import { Readability } from "@mozilla/readability";
 import DOMPurify from "dompurify";
+import { sha256 } from "js-sha256";
 
 const doc = document.implementation.createHTMLDocument("test");
 doc.body.innerHTML = DOMPurify.sanitize(`
@@ -23,18 +25,18 @@ export function SavesPage() {
           const url = record?.value?.url;
           if (typeof url !== "string") return;
 
-          return <Item key={record.cid} item={record.value} />;
+          return <Item key={record.cid} item={record.value} id={sha256(url)} />;
         })}
       </div>
     </div>
   );
 }
 
-function Item({ item }: { item: SaveRecord }) {
+function Item({ item, id }: { item: SaveRecord; id: string }) {
   const url = URL.parse(item.url);
 
   return (
-    <a className={styles.item} href={url?.href}>
+    <Link className={styles.item} to={`/read/${id}`}>
       <div
         className={styles.itemImg}
         style={{ backgroundImage: `url(${item.imageHref})` }}
@@ -46,6 +48,6 @@ function Item({ item }: { item: SaveRecord }) {
           <div>{url?.host}</div>
         </div>
       </div>
-    </a>
+    </Link>
   );
 }

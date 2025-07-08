@@ -11,6 +11,7 @@ import React from "react";
 import { LinkIcon } from "./icon/Link";
 import { isLink } from "./config/util";
 import { Toaster, toast } from "sonner";
+import { ReadPage } from "./routes/Read/Read";
 
 export function App() {
   const [isAuthenticated, setIsAuthenticated] = React.useReducer(
@@ -71,6 +72,7 @@ function AuthenticatedApp() {
           <Suspense>
             <Routes>
               <Route path="saves" element={<SavesPage />} />
+              <Route path="read/:id" element={<ReadPage />} />
             </Routes>
           </Suspense>
         </main>
