@@ -191,26 +191,7 @@ export function useFavArticleMutation(id: string) {
     },
     onSuccess: (data) => {
       const favorited = "cid" in data.data;
-      console.log("res", data);
-      console.log("favorited", favorited);
       queryClient.setQueryData(["favQuery", id], favorited);
     },
-  });
-}
-
-export function favArticleMutation(id: string) {
-  return agent.com.atproto.repo.putRecord({
-    repo: agent.assertDid,
-    collection: "org.bluepocket.v1.favorite",
-    rkey: id,
-    record: {},
-  });
-}
-
-export function unfavArticleMutation(id: string) {
-  return agent.com.atproto.repo.deleteRecord({
-    repo: agent.assertDid,
-    collection: "org.bluepocket.v1.favorite",
-    rkey: id,
   });
 }

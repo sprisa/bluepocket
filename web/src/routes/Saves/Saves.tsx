@@ -4,6 +4,7 @@ import styles from "./Saves.module.css";
 import { Readability } from "@mozilla/readability";
 import DOMPurify from "dompurify";
 import { sha256 } from "js-sha256";
+import { ExternalImage } from "../../components/ExternalImage/ExternalImage";
 
 const doc = document.implementation.createHTMLDocument("test");
 doc.body.innerHTML = DOMPurify.sanitize(`
@@ -37,17 +38,15 @@ function Item({ item, id }: { item: SaveRecord; id: string }) {
 
   return (
     <Link className={styles.item} to={`/read/${id}`}>
-      <div
-        className={styles.itemImg}
-        style={{ backgroundImage: `url(${item.imageHref})` }}
-      />
-      <div className={styles.itemContent}>
-        <p>{item.title}</p>
-        {/* <p>{item.excerpt}</p> */}
-        <div>
-          <div>{url?.host}</div>
+      <ExternalImage src={item.imageHref} id={id} className={styles.itemImg}>
+        <div className={styles.itemContent}>
+          <p>{item.title}</p>
+          {/* <p>{item.excerpt}</p> */}
+          <div>
+            <div>{url?.host}</div>
+          </div>
         </div>
-      </div>
+      </ExternalImage>
     </Link>
   );
 }

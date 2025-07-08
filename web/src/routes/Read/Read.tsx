@@ -1,7 +1,5 @@
 import { useNavigate, useParams } from "react-router";
 import {
-  favArticleMutation,
-  unfavArticleMutation,
   useArticleQuery,
   useFavArticleMutation,
   useIsFavQuery,
@@ -30,6 +28,7 @@ export function ReadPage() {
   console.log({ data });
   const article = useArticleQuery(docBuffer, new URL(data.url));
   const content = article.data.article?.content;
+  const textLength = article.data.article?.length ?? data.textLength
   console.log({ article });
   const html = React.useMemo(() => {
     if (content == null) return;
@@ -39,6 +38,7 @@ export function ReadPage() {
   return (
     <main className={styles.page}>
       <h1>{article.data.article?.title}</h1>
+      {textLength != null && <p>{calcReadingTime(textLength)}</p>}
       <a target="_blank" href={data.url}>
         View Original
       </a>
@@ -53,7 +53,7 @@ export function ReadPage() {
             const nodes = ref.querySelectorAll("pre code");
             for (const node of nodes) {
               // @ts-expect-error
-              hljs.highlightBlock(node);
+              hljs.highlightElement(node);
             }
 
             const waybackPrefixRe = /\/web\/\w+\//;
@@ -192,4 +192,20 @@ function Toolbar({
       )}
     </header>
   );
+}
+
+function calcReadingTime(charLength: number, wpm = 200) {
+  const charPerMinute = wpm * 5 // Average 5 chars per word
+  // Calculate reading time in minutes
+  const minutes = charLength / charPerMinute;
+
+  if (minutes < 1) {
+    return "Less than 1 min read";
+  }
+  if (minutes < 60) {
+    return `${Math.ceil(minutes)} min read`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = Math.ceil(minutes % 60);
+  return `${hours}h ${remainingMinutes}m read`;
 }
