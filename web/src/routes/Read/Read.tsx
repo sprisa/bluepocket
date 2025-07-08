@@ -17,6 +17,8 @@ import { TrashIcon } from "../../icon/Trash";
 import { ShareIcon } from "../../icon/Share";
 import { BackIcon } from "../../icon/Back";
 import { toast } from "sonner";
+import { ExternalImage } from "../../components/ExternalImage/ExternalImage";
+import { OutlinkIcon } from "../../icon/Outlink";
 
 const docBuffer = document.implementation.createHTMLDocument("test");
 
@@ -26,9 +28,11 @@ export function ReadPage() {
   const id = params.id!;
   const data = useSaveQuery(id);
   console.log({ data });
-  const article = useArticleQuery(docBuffer, new URL(data.url));
+  const url = new URL(data.url);
+  const article = useArticleQuery(docBuffer, url);
   const content = article.data.article?.content;
-  const textLength = article.data.article?.length ?? data.textLength
+  const siteName = article.data.article?.siteName ?? url.hostname;
+  const textLength = article.data.article?.length ?? data.textLength;
   console.log({ article });
   const html = React.useMemo(() => {
     if (content == null) return;
@@ -37,11 +41,21 @@ export function ReadPage() {
 
   return (
     <main className={styles.page}>
-      <h1>{article.data.article?.title}</h1>
-      {textLength != null && <p>{calcReadingTime(textLength)}</p>}
-      <a target="_blank" href={data.url}>
-        View Original
-      </a>
+      <header className={styles.header}>
+        <ExternalImage
+          id={id}
+          src={data.imageHref}
+          className={styles.headerImg}
+        />
+        <h1>{article.data.article?.title}</h1>
+        <div className={styles.headerTags}>
+          {textLength != null && <p>{calcReadingTime(textLength)}</p>}
+          {siteName != null && <p>{siteName}</p>}
+          <a target="_blank" href={data.url}>
+            View Original <OutlinkIcon height={18} />
+          </a>
+        </div>
+      </header>
       {html != null ? (
         <article
           // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
@@ -195,7 +209,7 @@ function Toolbar({
 }
 
 function calcReadingTime(charLength: number, wpm = 200) {
-  const charPerMinute = wpm * 5 // Average 5 chars per word
+  const charPerMinute = wpm * 5; // Average 5 chars per word
   // Calculate reading time in minutes
   const minutes = charLength / charPerMinute;
 
