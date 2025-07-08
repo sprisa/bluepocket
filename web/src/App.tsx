@@ -2,7 +2,7 @@ import styles from "./App.module.css";
 import { saveUrlMutation, useViewerQuery } from "./config/query";
 import { CommandMenu } from "./components/CommandMenu/CommandMenu";
 import { Sidebar } from "./components/Sidebar/Sidebar";
-import { Route, Routes } from "react-router";
+import { Link, Route, Routes } from "react-router";
 import { SavesPage } from "./routes/Saves/Saves";
 import { Suspense } from "react";
 import { agent } from "./config/atp";
@@ -40,7 +40,9 @@ function AuthenticatedApp() {
     <>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1>BluePocket</h1>
+          <Link to="/saves">
+            <h1>BluePocket</h1>
+          </Link>
           {/* <CommandMenu /> */}
           {isAddLinkOpen ? (
             <AddLinkInput
@@ -65,17 +67,28 @@ function AuthenticatedApp() {
         </div>
       </header>
       <div className={styles.main}>
-        <div className={styles.sidebar}>
-          <Sidebar />
-        </div>
-        <main className={styles.content}>
-          <Suspense>
-            <Routes>
-              <Route path="saves" element={<SavesPage />} />
-              <Route path="read/:id" element={<ReadPage />} />
-            </Routes>
-          </Suspense>
-        </main>
+        <Suspense>
+          <Routes>
+            <Route path="read/:id" element={<ReadPage />} />
+            <Route
+              path="*"
+              element={
+                <>
+                  <div className={styles.sidebar}>
+                    <Sidebar />
+                  </div>
+                  <main className={styles.content}>
+                    <Suspense>
+                      <Routes>
+                        <Route path="saves" element={<SavesPage />} />
+                      </Routes>
+                    </Suspense>
+                  </main>
+                </>
+              }
+            />
+          </Routes>
+        </Suspense>
         <Toaster />
       </div>
     </>

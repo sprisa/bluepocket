@@ -1,17 +1,32 @@
-import { useParams } from "react-router";
-import { useArticleQuery, useSaveQuery } from "../../config/query";
+import { useNavigate, useParams } from "react-router";
+import {
+  favArticleMutation,
+  unfavArticleMutation,
+  useArticleQuery,
+  useFavArticleMutation,
+  useIsFavQuery,
+  useSaveQuery,
+  type Article,
+} from "../../config/query";
 import DOMPurify from "dompurify";
 import React from "react";
 import styles from "./Read.module.css";
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
+import { StarIcon } from "../../icon/Star";
+import { ArchiveIcon } from "../../icon/Archive";
+import { TrashIcon } from "../../icon/Trash";
+import { ShareIcon } from "../../icon/Share";
+import { BackIcon } from "../../icon/Back";
+import { toast } from "sonner";
 
 const docBuffer = document.implementation.createHTMLDocument("test");
 
 export function ReadPage() {
   const params = useParams();
   console.log({ params });
-  const data = useSaveQuery(params.id as string);
+  const id = params.id!;
+  const data = useSaveQuery(id);
   console.log({ data });
   const article = useArticleQuery(docBuffer, new URL(data.url));
   const content = article.data.article?.content;
@@ -22,7 +37,7 @@ export function ReadPage() {
   }, [content]);
 
   return (
-    <div className={styles.page}>
+    <main className={styles.page}>
       <h1>{article.data.article?.title}</h1>
       <a target="_blank" href={data.url}>
         View Original
@@ -79,6 +94,102 @@ export function ReadPage() {
           }}
         />
       ) : null}
-    </div>
+      <Toolbar id={id} article={article.data.article} url={data.url} />
+    </main>
+  );
+}
+
+function Toolbar({
+  id,
+  article,
+  url,
+}: {
+  id: string;
+  article: Article;
+  url: string;
+}) {
+  const baseFrequency = 0.005;
+  const scale = 10;
+  const isFavorite = useIsFavQuery(id).data;
+  const navi = useNavigate();
+  const canShare = navigator.canShare({
+    url: url,
+  });
+
+  const favMutation = useFavArticleMutation(id);
+
+  const handleFavorite = () => {
+    const type = isFavorite ? "Removed" : "Added";
+    favMutation.mutate(isFavorite, {
+      onSuccess() {
+        toast.success(`${type} Favorite`);
+      },
+    });
+  };
+
+  const handleShare = () => {
+    navigator.share({
+      title: article?.title ?? undefined,
+      url: url,
+    });
+  };
+
+  return (
+    <header className={styles.toolbar}>
+      {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+      <svg
+        width="0"
+        height="0"
+        style={{ position: "absolute", overflow: "hidden" }}
+      >
+        <defs>
+          <filter
+            id="glass-distortion"
+            x="0%"
+            y="0%"
+            width="100%"
+            height="100%"
+          >
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency={`${baseFrequency} ${baseFrequency}`}
+              numOctaves="2"
+              seed="92"
+              result="noise"
+            ></feTurbulence>
+            <feGaussianBlur
+              in="noise"
+              stdDeviation="2"
+              result="blurred"
+            ></feGaussianBlur>
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="blurred"
+              scale={scale}
+              xChannelSelector="R"
+              yChannelSelector="G"
+            ></feDisplacementMap>
+          </filter>
+        </defs>
+      </svg>
+
+      <button onClick={() => navi(-1)}>
+        <BackIcon height={24} />
+      </button>
+      <button onClick={handleFavorite} disabled={favMutation.isPending}>
+        <StarIcon height={24} fill={isFavorite ? "var(--gold)" : "none"} />
+      </button>
+      <button>
+        <ArchiveIcon height={24} />
+      </button>
+      <button>
+        <TrashIcon height={24} />
+      </button>
+      {canShare && (
+        <button onClick={handleShare}>
+          <ShareIcon height={24} />
+        </button>
+      )}
+    </header>
   );
 }

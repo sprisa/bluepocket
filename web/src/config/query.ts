@@ -1,4 +1,8 @@
-import { QueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { agent } from "./atp";
 import { sha256 } from "js-sha256";
 import { Readability } from "@mozilla/readability";
@@ -48,7 +52,12 @@ export function useSavesQuery(): SaveQueryResponse {
         limit: 50,
       });
     },
-  }).data.data.records as SaveQueryResponse;
+  }).data.data.records.sort((a, b) => {
+    const av = a.value as SaveRecord;
+    const bv = b.value as SaveRecord;
+
+    return new Date(bv.createdAt).getTime() - new Date(av.createdAt).getTime();
+  }) as SaveQueryResponse;
 }
 
 export function useSaveQuery(id: string): SaveRecord {
@@ -93,9 +102,11 @@ export async function saveUrlMutation(urlStr: string) {
   });
 }
 
+export type Article = ReturnType<Readability["parse"]>;
+
 export function fetchArticle(doc: Document, url: URL) {
   return new Promise<{
-    article: ReturnType<Readability["parse"]>;
+    article: Article;
     image?: string;
   }>((resolve) => {
     const req = new XMLHttpRequest();
@@ -137,5 +148,69 @@ export function useArticleQuery(docBuffer: Document, url: URL) {
     queryFn: () => {
       return fetchArticle(docBuffer, url);
     },
+  });
+}
+
+export function useIsFavQuery(id: string) {
+  return useSuspenseQuery({
+    queryKey: ["favQuery", id],
+    queryFn: () => {
+      return agent.com.atproto.repo
+        .getRecord({
+          repo: agent.assertDid,
+          collection: "org.bluepocket.v1.favorite",
+          rkey: id,
+        })
+        .then(() => {
+          return true;
+        })
+        .catch(() => {
+          return false;
+        });
+    },
+    retry: false,
+  });
+}
+
+export function useFavArticleMutation(id: string) {
+  return useMutation({
+    mutationFn: (isFavorite: boolean) => {
+      if (isFavorite) {
+        return agent.com.atproto.repo.deleteRecord({
+          repo: agent.assertDid,
+          collection: "org.bluepocket.v1.favorite",
+          rkey: id,
+        });
+      }
+      return agent.com.atproto.repo.putRecord({
+        repo: agent.assertDid,
+        collection: "org.bluepocket.v1.favorite",
+        rkey: id,
+        record: {},
+      });
+    },
+    onSuccess: (data) => {
+      const favorited = "cid" in data.data;
+      console.log("res", data);
+      console.log("favorited", favorited);
+      queryClient.setQueryData(["favQuery", id], favorited);
+    },
+  });
+}
+
+export function favArticleMutation(id: string) {
+  return agent.com.atproto.repo.putRecord({
+    repo: agent.assertDid,
+    collection: "org.bluepocket.v1.favorite",
+    rkey: id,
+    record: {},
+  });
+}
+
+export function unfavArticleMutation(id: string) {
+  return agent.com.atproto.repo.deleteRecord({
+    repo: agent.assertDid,
+    collection: "org.bluepocket.v1.favorite",
+    rkey: id,
   });
 }
