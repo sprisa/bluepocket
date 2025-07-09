@@ -6,7 +6,8 @@ export function Sidebar() {
   return (
     <nav className={styles.nav}>
       <Link to="/saves">Saves</Link>
-      <Section name="Collections" titleNode={<button>+</button>}></Section>
+      {/* TODO: Build Lists which are externally shareable collections of Links */}
+      {/* <Section name="Collections" titleNode={<button>+</button>}></Section> */}
       <Section name="Filter">
         <Link to="/saves/archive">Archived</Link>
         <Link to="/saves/favorites">Favorites</Link>
