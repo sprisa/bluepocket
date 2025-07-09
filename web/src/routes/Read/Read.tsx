@@ -19,8 +19,9 @@ import { toast } from "sonner";
 import { ExternalImage } from "../../components/ExternalImage/ExternalImage";
 import { OutlinkIcon } from "../../icon/Outlink";
 import type { Article } from "../../config/article";
+import { makeLinkRecord } from "../../config/atp";
 
-const docBuffer = document.implementation.createHTMLDocument("test");
+const docBuffer = document.implementation.createHTMLDocument("read");
 
 export function ReadPage() {
   const params = useParams();
@@ -30,9 +31,9 @@ export function ReadPage() {
   console.log({ data });
   const url = new URL(data.url);
   const article = useArticleQuery(docBuffer, url);
-  const content = article.data.article?.content;
-  const siteName = article.data.article?.siteName ?? url.hostname;
-  const textLength = article.data.article?.length ?? data.textLength;
+  const content = article.data.content;
+  const siteName = article.data.siteName ?? url.hostname;
+  const textLength = article.data.length ?? data.textLength;
   console.log({ article });
   const html = React.useMemo(() => {
     if (content == null) return;
@@ -47,7 +48,7 @@ export function ReadPage() {
           src={data.imageHref}
           className={styles.headerImg}
         />
-        <h1>{article.data.article?.title}</h1>
+        <h1>{article.data.title}</h1>
         <div className={styles.headerTags}>
           {textLength != null && <p>{calcReadingTime(textLength)}</p>}
           {siteName != null && <p>{siteName}</p>}
@@ -108,7 +109,7 @@ export function ReadPage() {
           }}
         />
       ) : null}
-      <Toolbar id={id} article={article.data.article} url={data.url} />
+      <Toolbar id={id} article={article.data} url={data.url} />
     </main>
   );
 }
@@ -130,7 +131,10 @@ function Toolbar({
     url: url,
   });
 
-  const favMutation = useFavArticleMutation(id);
+  const favMutation = useFavArticleMutation(
+    id,
+    makeLinkRecord(new URL(url), article)
+  );
 
   const handleFavorite = () => {
     const type = isFavorite ? "Removed" : "Added";

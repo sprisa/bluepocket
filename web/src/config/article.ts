@@ -1,12 +1,11 @@
 import { Readability } from "@mozilla/readability";
 
-export type Article = ReturnType<Readability["parse"]>;
+export type Article = {
+  image?: string;
+} & ReturnType<Readability["parse"]>;
 
-export function fetchArticle(doc: Document, url: URL) {
-  return new Promise<{
-    article: Article;
-    image?: string;
-  }>((resolve, reject) => {
+export function fetchArticle(doc: Document, url: URL): Promise<Article> {
+  return new Promise((resolve, reject) => {
     const req = new XMLHttpRequest();
     req.onload = () => {
       // console.log(req);
@@ -22,7 +21,16 @@ export function fetchArticle(doc: Document, url: URL) {
         | undefined;
       // console.dir(el);
       resolve({
-        article,
+        title: article?.title,
+        content: article?.content,
+        byline: article?.byline,
+        dir: article?.dir,
+        excerpt: article?.excerpt,
+        lang: article?.lang,
+        length: article?.length,
+        publishedTime: article?.publishedTime,
+        siteName: article?.siteName,
+        textContent: article?.textContent,
         image: el?.content,
       });
     };

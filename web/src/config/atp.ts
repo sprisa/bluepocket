@@ -1,4 +1,5 @@
 import { AtpAgent } from "@atproto/api";
+import type { Article } from "./article";
 // import { sha256 } from "js-sha256";
 
 export const agent = new AtpAgent({
@@ -38,7 +39,6 @@ export const Collection = {
   Link: "org.bluepocket.v1.link",
 } as const;
 
-
 export type LinkRecord = {
   url: string;
   title?: string;
@@ -49,3 +49,16 @@ export type LinkRecord = {
   imageHref?: string;
   createdAt: string;
 };
+
+export function makeLinkRecord(url: URL, article: Article): LinkRecord {
+  return {
+    url: url.href,
+    title: article?.title ?? undefined,
+    excerpt: article?.excerpt ?? undefined,
+    publishTime: article?.publishedTime ?? undefined,
+    siteName: article?.siteName ?? undefined,
+    textLength: article?.length ?? undefined,
+    imageHref: article.image,
+    createdAt: new Date().toISOString(),
+  };
+}

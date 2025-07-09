@@ -3,7 +3,7 @@ import {
   useMutation,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { agent, Collection, type LinkRecord } from "./atp";
+import { agent, Collection, makeLinkRecord, type LinkRecord } from "./atp";
 import { sha256 } from "js-sha256";
 import { fetchArticle } from "./article";
 
@@ -68,7 +68,7 @@ export function useSaveUrlMutation() {
       if (url == null) return;
       url.searchParams.delete("utm_source");
       const rkey = sha256(url.href);
-      const { article, image } = await fetchArticle(
+      const article = await fetchArticle(
         document.implementation.createHTMLDocument("tmp"),
         url
       );
@@ -76,18 +76,7 @@ export function useSaveUrlMutation() {
         delete article.title;
       }
 
-      const record = {
-        url: url.href,
-        // state: 'saved',
-        title: article?.title ?? undefined,
-        excerpt: article?.excerpt ?? undefined,
-        publishTime: article?.publishedTime ?? undefined,
-        siteName: article?.siteName ?? undefined,
-        textLength: article?.length ?? undefined,
-        imageHref: image,
-        createdAt: new Date().toISOString(),
-      } satisfies LinkRecord;
-
+      const record = makeLinkRecord(url, article);
       await Promise.all([
         agent.com.atproto.repo.putRecord({
           repo: agent.assertDid,
@@ -153,7 +142,7 @@ export function useIsFavQuery(id: string) {
   });
 }
 
-export function useFavArticleMutation(id: string) {
+export function useFavArticleMutation(id: string, link: LinkRecord) {
   return useMutation({
     mutationFn: (isFavorite: boolean) => {
       if (isFavorite) {
@@ -167,7 +156,7 @@ export function useFavArticleMutation(id: string) {
         repo: agent.assertDid,
         collection: Collection.Favorite,
         rkey: id,
-        record: {},
+        record: link,
       });
     },
     onSuccess: (data) => {
