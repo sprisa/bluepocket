@@ -30,13 +30,28 @@ type SaveQueryResponse = Array<{
   value: LinkRecord;
 }>;
 
-export function useSavesQuery(): SaveQueryResponse {
+export function useSavesQuery(collectionName: string): SaveQueryResponse {
   return useSuspenseQuery({
-    queryKey: ["savesQuery", 1],
+    queryKey: ["savesQuery", collectionName],
     queryFn: () => {
+      let collection: string;
+      switch (collectionName) {
+        case "saves":
+          collection = Collection.Save;
+          break;
+        case "favorites":
+          collection = Collection.Favorite;
+          break;
+        case "archive":
+          collection = Collection.Archive;
+          break;
+        default:
+          collection = Collection.Group(collectionName);
+      }
+
       return agent.com.atproto.repo.listRecords({
         repo: agent.assertDid,
-        collection: Collection.Save,
+        collection: collection,
         limit: 21,
       });
     },

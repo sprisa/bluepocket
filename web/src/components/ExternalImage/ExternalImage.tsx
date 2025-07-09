@@ -18,17 +18,17 @@ export function ExternalImage({ id, src, children, className }: Props) {
     if (src == null || src === '') return;
 
     fetchImage(src)
-      .catch((err) => {
-        console.error("img", src, err);
+      .catch((_err) => {
+        // console.error("img", src, err);
         if (archiveRegex.test(src)) {
           const newSrc = src.replace(archiveRegex, "");
-          console.log('trying', newSrc)
+          // console.log('trying', newSrc)
           return fetchImage(newSrc);
         }
       })
       .then((src) => {
         if (src == null) return
-        console.log("got image", src);
+        // console.log("got image", src);
         setRender(src);
       });
   }, [src]);

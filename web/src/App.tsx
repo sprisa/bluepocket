@@ -79,7 +79,7 @@ function AuthenticatedApp() {
                   <main className={styles.content}>
                     <Suspense>
                       <Routes>
-                        <Route path="saves" element={<SavesPage />} />
+                        <Route path="saves/:collection?" element={<SavesPage />} />
                       </Routes>
                     </Suspense>
                   </main>

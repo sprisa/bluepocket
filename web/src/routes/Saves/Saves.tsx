@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import { useSavesQuery } from "../../config/query";
 import styles from "./Saves.module.css";
 import { sha256 } from "js-sha256";
@@ -6,7 +6,8 @@ import { ExternalImage } from "../../components/ExternalImage/ExternalImage";
 import type { LinkRecord } from "../../config/atp";
 
 export function SavesPage() {
-  const saves = useSavesQuery();
+  const { collection } = useParams()
+  const saves = useSavesQuery(collection ?? 'saves');
   console.log({ saves: saves });
 
   return (
@@ -23,7 +24,6 @@ export function SavesPage() {
     </div>
   );
 }
-
 function Item({ item, id }: { item: LinkRecord; id: string }) {
   const url = URL.parse(item.url);
 
