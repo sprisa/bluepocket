@@ -1,7 +1,9 @@
 import { useNavigate, useParams } from "react-router";
 import {
+  useArchiveMutation,
   useArticleQuery,
   useFavArticleMutation,
+  useIsArchivedQuery,
   useIsFavQuery,
   useLinkQuery,
 } from "../../config/query";
@@ -25,7 +27,6 @@ const docBuffer = document.implementation.createHTMLDocument("read");
 
 export function ReadPage() {
   const params = useParams();
-  console.log({ params });
   const id = params.id!;
   const data = useLinkQuery(id);
   console.log({ data });
@@ -126,15 +127,15 @@ function Toolbar({
   const baseFrequency = 0.005;
   const scale = 10;
   const isFavorite = useIsFavQuery(id).data;
+  const isArchived = useIsArchivedQuery(id).data;
   const navi = useNavigate();
   const canShare = navigator.canShare({
     url: url,
   });
+  const linkRecord = makeLinkRecord(new URL(url), article);
 
-  const favMutation = useFavArticleMutation(
-    id,
-    makeLinkRecord(new URL(url), article)
-  );
+  const favMutation = useFavArticleMutation(id, linkRecord);
+  const archiveMutation = useArchiveMutation(id, linkRecord);
 
   const handleFavorite = () => {
     const type = isFavorite ? "Removed" : "Added";
@@ -143,6 +144,10 @@ function Toolbar({
         toast.success(`${type} Favorite`);
       },
     });
+  };
+
+  const handleArchive = () => {
+    archiveMutation.mutate(!isArchived);
   };
 
   const handleShare = () => {
@@ -197,8 +202,8 @@ function Toolbar({
       <button onClick={handleFavorite} disabled={favMutation.isPending}>
         <StarIcon height={24} fill={isFavorite ? "var(--gold)" : "none"} />
       </button>
-      <button>
-        <ArchiveIcon height={24} />
+      <button onClick={handleArchive} disabled={archiveMutation.isPending}>
+        <ArchiveIcon height={24} fill={isArchived ? "var(--tan)" : "none"} />
       </button>
       <button>
         <TrashIcon height={24} />

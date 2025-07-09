@@ -8,7 +8,7 @@ export function ArchiveIcon(props: React.SVGProps<SVGSVGElement>) {
         height={40}
         x={24}
         y={56}
-        fill="none"
+        fill={props.fill ?? 'none'}
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -16,7 +16,7 @@ export function ArchiveIcon(props: React.SVGProps<SVGSVGElement>) {
         rx={8}
       />
       <path
-        fill="none"
+        fill={props.fill ?? 'none'}
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"

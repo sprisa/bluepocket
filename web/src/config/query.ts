@@ -180,3 +180,64 @@ export function useFavArticleMutation(id: string, link: LinkRecord) {
     },
   });
 }
+
+export function useIsArchivedQuery(id: string) {
+  return useSuspenseQuery({
+    queryKey: ["isArchived", id],
+    queryFn() {
+      return agent.com.atproto.repo
+        .getRecord({
+          repo: agent.assertDid,
+          collection: Collection.Archive,
+          rkey: id,
+        })
+        .then(() => {
+          return true;
+        })
+        .catch(() => {
+          return false;
+        });
+    },
+    retry: false,
+  });
+}
+
+export function useArchiveMutation(id: string, link: LinkRecord) {
+  return useMutation({
+    async mutationFn(archive: boolean) {
+      if (archive === false) {
+        await agent.com.atproto.repo.putRecord({
+          repo: agent.assertDid,
+          collection: Collection.Save,
+          rkey: id,
+          record: link,
+        });
+        await agent.com.atproto.repo.deleteRecord({
+          repo: agent.assertDid,
+          collection: Collection.Archive,
+          rkey: id,
+        });
+
+        return archive;
+      }
+
+      await agent.com.atproto.repo.putRecord({
+        repo: agent.assertDid,
+        collection: Collection.Archive,
+        rkey: id,
+        record: link,
+      });
+
+      await agent.com.atproto.repo.deleteRecord({
+        repo: agent.assertDid,
+        collection: Collection.Save,
+        rkey: id,
+      });
+
+      return archive
+    },
+    onSuccess: (archived: boolean) => {
+      queryClient.setQueryData(["isArchived", id], archived);
+    },
+  });
+}
