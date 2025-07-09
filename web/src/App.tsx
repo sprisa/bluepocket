@@ -1,6 +1,5 @@
 import styles from "./App.module.css";
-import { saveUrlMutation, useViewerQuery } from "./config/query";
-import { CommandMenu } from "./components/CommandMenu/CommandMenu";
+import { useSaveUrlMutation, useViewerQuery } from "./config/query";
 import { Sidebar } from "./components/Sidebar/Sidebar";
 import { Link, Route, Routes } from "react-router";
 import { SavesPage } from "./routes/Saves/Saves";
@@ -97,22 +96,18 @@ function AuthenticatedApp() {
 
 function AddLinkInput({ onClose }: { onClose: () => unknown }) {
   const [val, setVal] = React.useState("");
-  const [isPending, setIsPending] = React.useState(false);
   const maybeLink = isLink(val);
+  const saveMutation = useSaveUrlMutation();
+  const isPending = saveMutation.isPending;
 
   return (
     <form
       className={styles.addLinkInput}
       onSubmit={(ev) => {
         ev.preventDefault();
-        setIsPending(true);
-        const promise = saveUrlMutation(val)
-          .then(() => {
-            onClose();
-          })
-          .finally(() => {
-            setIsPending(false);
-          });
+        const promise = saveMutation.mutateAsync(val).then(() => {
+          onClose();
+        });
 
         toast.promise(promise, {
           loading: "Saving Link...",

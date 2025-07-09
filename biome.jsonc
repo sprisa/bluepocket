@@ -41,6 +41,9 @@
       "a11y": {
         "useButtonType": "off",
         "noBlankTarget": "off"
+      },
+      "performance": {
+        "noDelete": "off"
       }
     }
   },

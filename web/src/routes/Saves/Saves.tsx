@@ -1,18 +1,9 @@
 import { Link } from "react-router";
-import { useSavesQuery, type SaveRecord } from "../../config/query";
+import { useSavesQuery } from "../../config/query";
 import styles from "./Saves.module.css";
-import { Readability } from "@mozilla/readability";
-import DOMPurify from "dompurify";
 import { sha256 } from "js-sha256";
 import { ExternalImage } from "../../components/ExternalImage/ExternalImage";
-
-const doc = document.implementation.createHTMLDocument("test");
-doc.body.innerHTML = DOMPurify.sanitize(`
-
-`);
-
-const article = new Readability(doc).parse();
-console.log(article);
+import type { LinkRecord } from "../../config/atp";
 
 export function SavesPage() {
   const saves = useSavesQuery();
@@ -33,7 +24,7 @@ export function SavesPage() {
   );
 }
 
-function Item({ item, id }: { item: SaveRecord; id: string }) {
+function Item({ item, id }: { item: LinkRecord; id: string }) {
   const url = URL.parse(item.url);
 
   return (

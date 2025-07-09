@@ -3,8 +3,7 @@ import {
   useArticleQuery,
   useFavArticleMutation,
   useIsFavQuery,
-  useSaveQuery,
-  type Article,
+  useLinkQuery,
 } from "../../config/query";
 import DOMPurify from "dompurify";
 import React from "react";
@@ -19,6 +18,7 @@ import { BackIcon } from "../../icon/Back";
 import { toast } from "sonner";
 import { ExternalImage } from "../../components/ExternalImage/ExternalImage";
 import { OutlinkIcon } from "../../icon/Outlink";
+import type { Article } from "../../config/article";
 
 const docBuffer = document.implementation.createHTMLDocument("test");
 
@@ -26,7 +26,7 @@ export function ReadPage() {
   const params = useParams();
   console.log({ params });
   const id = params.id!;
-  const data = useSaveQuery(id);
+  const data = useLinkQuery(id);
   console.log({ data });
   const url = new URL(data.url);
   const article = useArticleQuery(docBuffer, url);

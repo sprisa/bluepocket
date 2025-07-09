@@ -3,9 +3,9 @@ import {
   useMutation,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { agent } from "./atp";
+import { agent, Collection, type LinkRecord } from "./atp";
 import { sha256 } from "js-sha256";
-import { Readability } from "@mozilla/readability";
+import { fetchArticle } from "./article";
 
 export const queryClient = new QueryClient();
 
@@ -24,21 +24,10 @@ export function useViewerQuery() {
   return useProfileQuery(agent.assertDid);
 }
 
-export type SaveRecord = {
-  url: string;
-  title?: string;
-  excerpt?: string;
-  publishTime?: string;
-  siteName?: string;
-  textLength?: number;
-  imageHref?: string;
-  createdAt: string;
-};
-
 type SaveQueryResponse = Array<{
   uri: string;
   cid: string;
-  value: SaveRecord;
+  value: LinkRecord;
 }>;
 
 export function useSavesQuery(): SaveQueryResponse {
@@ -47,98 +36,90 @@ export function useSavesQuery(): SaveQueryResponse {
     queryFn: () => {
       return agent.com.atproto.repo.listRecords({
         repo: agent.assertDid,
-        // TODO: Need to save open graph info such as title, image, author, and subtitle.
-        collection: "org.bluepocket.v1.save",
-        limit: 50,
+        collection: Collection.Save,
+        limit: 21,
       });
     },
   }).data.data.records.sort((a, b) => {
-    const av = a.value as SaveRecord;
-    const bv = b.value as SaveRecord;
+    const av = a.value as LinkRecord;
+    const bv = b.value as LinkRecord;
 
     return new Date(bv.createdAt).getTime() - new Date(av.createdAt).getTime();
   }) as SaveQueryResponse;
 }
 
-export function useSaveQuery(id: string): SaveRecord {
+export function useLinkQuery(id: string): LinkRecord {
   return useSuspenseQuery({
-    queryKey: ["saveQuery", id],
+    queryKey: ["linkQuery", id],
     queryFn: () => {
       return agent.com.atproto.repo.getRecord({
         repo: agent.assertDid,
-        collection: "org.bluepocket.v1.save",
+        collection: Collection.Link,
         rkey: id,
       });
     },
-  }).data.data.value as SaveRecord;
+  }).data.data.value as LinkRecord;
 }
 
-export async function saveUrlMutation(urlStr: string) {
-  const url = URL.parse(urlStr);
-  if (url == null) return;
-  url.searchParams.delete("utm_source");
-  const rkey = sha256(url.href);
-  const { article, image } = await fetchArticle(
-    document.implementation.createHTMLDocument("tmp"),
-    url
-  );
+export function useSaveUrlMutation() {
+  return useMutation({
+    async mutationFn(urlStr: string) {
+      const url = URL.parse(urlStr);
+      if (url == null) return;
+      url.searchParams.delete("utm_source");
+      const rkey = sha256(url.href);
+      const { article, image } = await fetchArticle(
+        document.implementation.createHTMLDocument("tmp"),
+        url
+      );
+      if (article?.title === "tmp") {
+        delete article.title;
+      }
 
-  return await agent.com.atproto.repo.putRecord({
-    repo: agent.assertDid, // The user
-    collection: "org.bluepocket.v1.save", // The collection
-    rkey: rkey, // The record key
-    record: {
-      // TODO: Get title and otag metadate
-      url: url.href,
-      // state: 'saved',
-      title: article?.title ?? undefined,
-      excerpt: article?.excerpt ?? undefined,
-      publishTime: article?.publishedTime ?? undefined,
-      siteName: article?.siteName ?? undefined,
-      textLength: article?.length ?? undefined,
-      imageHref: image,
-      createdAt: new Date().toISOString(),
-    } satisfies SaveRecord,
-  });
-}
+      const record = {
+        url: url.href,
+        // state: 'saved',
+        title: article?.title ?? undefined,
+        excerpt: article?.excerpt ?? undefined,
+        publishTime: article?.publishedTime ?? undefined,
+        siteName: article?.siteName ?? undefined,
+        textLength: article?.length ?? undefined,
+        imageHref: image,
+        createdAt: new Date().toISOString(),
+      } satisfies LinkRecord;
 
-export type Article = ReturnType<Readability["parse"]>;
+      await Promise.all([
+        agent.com.atproto.repo.putRecord({
+          repo: agent.assertDid,
+          collection: Collection.Save,
+          rkey,
+          record,
+        }),
+        agent.com.atproto.repo.putRecord({
+          repo: agent.assertDid,
+          collection: Collection.Link,
+          rkey,
+          record,
+        }),
+      ]).catch((err) => {
+        agent.com.atproto.repo.deleteRecord({
+          repo: agent.assertDid,
+          collection: Collection.Save,
+          rkey,
+        });
+        agent.com.atproto.repo.deleteRecord({
+          repo: agent.assertDid,
+          collection: Collection.Link,
+          rkey,
+        });
 
-export function fetchArticle(doc: Document, url: URL) {
-  return new Promise<{
-    article: Article;
-    image?: string;
-  }>((resolve) => {
-    const req = new XMLHttpRequest();
-    req.onload = () => {
-      // console.log(req);
-      doc.body.innerHTML = req.response.contents;
-      const reader = new Readability(doc, {
-        keepClasses: true,
+        throw err;
       });
-      // console.log("reader", reader);
-      const article = reader.parse();
-      // console.log("article", article);
-      const el = doc.querySelector('meta[property="og:image"]') as
-        | HTMLMetaElement
-        | undefined;
-      // console.dir(el);
-      resolve({
-        article,
-        image: el?.content,
-      });
-    };
-    let proxyUrl = `https://web.archive.org/web/${url.href}`;
-    // TODO: Use custom CORS proxy
-    // https://github.com/reynaldichernando/Whatever-Origin?tab=readme-ov-file#self-hosting
-    proxyUrl = `https://whateverorigin.org/get?url=${encodeURIComponent(
-      proxyUrl
-    )}`;
-    req.open("GET", proxyUrl);
-    // req.responseType = 'document'
-    // req.responseType = 'text'
-    req.responseType = "json";
-    req.send();
+    },
+    onSuccess: (data) => {
+      // const favorited = "cid" in data.data;
+      // queryClient.setQueryData(["favQuery", id], favorited);
+    },
   });
 }
 
@@ -154,11 +135,11 @@ export function useArticleQuery(docBuffer: Document, url: URL) {
 export function useIsFavQuery(id: string) {
   return useSuspenseQuery({
     queryKey: ["favQuery", id],
-    queryFn: () => {
+    queryFn() {
       return agent.com.atproto.repo
         .getRecord({
           repo: agent.assertDid,
-          collection: "org.bluepocket.v1.favorite",
+          collection: Collection.Favorite,
           rkey: id,
         })
         .then(() => {
@@ -178,13 +159,13 @@ export function useFavArticleMutation(id: string) {
       if (isFavorite) {
         return agent.com.atproto.repo.deleteRecord({
           repo: agent.assertDid,
-          collection: "org.bluepocket.v1.favorite",
+          collection: Collection.Favorite,
           rkey: id,
         });
       }
       return agent.com.atproto.repo.putRecord({
         repo: agent.assertDid,
-        collection: "org.bluepocket.v1.favorite",
+        collection: Collection.Favorite,
         rkey: id,
         record: {},
       });
