@@ -14,9 +14,11 @@ import (
 	"time"
 )
 
+const waybackHost = "https://web.archive.org"
+
 func main() {
 	ctx := sig.ShutdownContext(context.Background())
-	archiveUrl, err := url.Parse("https://web.archive.org")
+	archiveUrl, err := url.Parse(waybackHost)
 	errutil.InvariantError(err, "error building archive url")
 
 	proxy := httputil.NewSingleHostReverseProxy(archiveUrl)
@@ -31,13 +33,13 @@ func main() {
 			// l.Log.Info().
 			// 	Str("location", location).
 			// 	Msgf("Redirect: %v", res.StatusCode)
-			location = "http://localhost:3001?p=" + strings.Replace(location, "https://web.archive.org", "", 1)
+			location = "http://localhost:3001?p=" + strings.Replace(location, waybackHost, "", 1)
 			// l.Log.Info().Msgf("newLocation: %v", location)
 			res.Header.Set("location", location)
 		}
 
 		// Set content base for relative links
-		res.Header.Set("Content-Base", "https://web.archive.org")
+		res.Header.Set("Content-Base", waybackHost)
 		return nil
 	}
 
@@ -71,7 +73,7 @@ func main() {
 		// Redirect relative asset links to wayback archive.
 		// Only handle documents.
 		if ext != "" {
-			url := "https://web.archive.org" + req.URL.String()
+			url := waybackHost + req.URL.String()
 			http.Redirect(res, req, url, http.StatusMovedPermanently)
 			return
 		}
@@ -86,7 +88,6 @@ func main() {
 		req.Host = archiveUrl.Host
 
 		// l.Log.Info().Msgf("SENDING QUERY: %+v", req.URL.String())
-
 
 		proxy.ServeHTTP(res, req)
 	})
