@@ -4,12 +4,16 @@ export type Article = {
   image?: string;
 } & ReturnType<Readability["parse"]>;
 
+const archiveSvcUrl = "http://localhost:3001";
+// const archiveSvcUrl = 'https://archive.bluepocket.org'
+
 export function fetchArticle(doc: Document, url: URL): Promise<Article> {
   return new Promise((resolve, reject) => {
     const req = new XMLHttpRequest();
     req.onload = () => {
       // console.log(req);
-      doc.body.innerHTML = req.response.contents;
+      // doc.body.innerHTML = req.response.contents;
+      const doc = req.response;
       const reader = new Readability(doc, {
         keepClasses: true,
       });
@@ -35,16 +39,10 @@ export function fetchArticle(doc: Document, url: URL): Promise<Article> {
       });
     };
     req.onerror = reject;
-    let proxyUrl = `https://web.archive.org/web/${url.href}`;
-    // TODO: Use custom CORS proxy
-    // https://github.com/reynaldichernando/Whatever-Origin?tab=readme-ov-file#self-hosting
-    proxyUrl = `https://whateverorigin.org/get?url=${encodeURIComponent(
-      proxyUrl
-    )}`;
+    let proxyUrl = `/web/${url.href}`;
+    proxyUrl = `${archiveSvcUrl}?p=${encodeURIComponent(proxyUrl)}`;
     req.open("GET", proxyUrl);
-    // req.responseType = 'document'
-    // req.responseType = 'text'
-    req.responseType = "json";
+    req.responseType = "document";
     req.send();
   });
 }
