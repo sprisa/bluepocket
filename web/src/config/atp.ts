@@ -37,8 +37,8 @@ export const Collection = {
    * Data is denormalized since atproto api doesn't support filter queries.
    */
   Link: "org.bluepocket.v1.link",
-  Group: <T extends string>(name: T) =>
-    `org.bluepocket.v1.group.${name}` as const,
+  // List: <T extends string>(name: T) =>
+  //   `org.bluepocket.v1.list.${name}` as const,
 } as const;
 
 export type LinkRecord = {

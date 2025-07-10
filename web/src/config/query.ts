@@ -45,8 +45,10 @@ export function useSavesQuery(collectionName: string): SaveQueryResponse {
         case "archive":
           collection = Collection.Archive;
           break;
+        // default:
+        //   collection = Collection.Group(collectionName);
         default:
-          collection = Collection.Group(collectionName);
+          throw new Error(`invalid collection: ${collectionName}`);
       }
 
       return agent.com.atproto.repo.listRecords({
@@ -234,7 +236,7 @@ export function useArchiveMutation(id: string, link: LinkRecord) {
         rkey: id,
       });
 
-      return archive
+      return archive;
     },
     onSuccess: (archived: boolean) => {
       queryClient.setQueryData(["isArchived", id], archived);
