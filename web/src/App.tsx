@@ -72,7 +72,7 @@ function AuthenticatedApp() {
             <Route
               path="*"
               element={
-                <>
+                <div className={styles.sidebarContent}>
                   <div className={styles.sidebar}>
                     <Sidebar />
                   </div>
@@ -83,7 +83,7 @@ function AuthenticatedApp() {
                       </Routes>
                     </Suspense>
                   </main>
-                </>
+                </div>
               }
             />
           </Routes>

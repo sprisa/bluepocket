@@ -50,11 +50,19 @@
 }
 
 .main {
+  max-width: var(--maxWidth);
+  margin: 0 auto;
+}
+
+.sidebarContent {
   display: flex;
   gap: 32px;
   padding: 32px;
-  max-width: var(--maxWidth);
-  margin: 0 auto;
+  
+
+  @media (max-width: 782px) {
+    flex-direction: column;
+  }
 }
 
 .sidebar {

@@ -129,7 +129,7 @@ function Toolbar({
   const isFavorite = useIsFavQuery(id).data;
   const isArchived = useIsArchivedQuery(id).data;
   const navi = useNavigate();
-  const canShare = navigator.canShare({
+  const canShare = navigator.canShare?.({
     url: url,
   });
   const linkRecord = makeLinkRecord(new URL(url), article);
