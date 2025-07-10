@@ -1,6 +1,7 @@
 package main
 
 import (
+	"archivesvc/util/env"
 	"archivesvc/util/errutil"
 	l "archivesvc/util/logger"
 	"archivesvc/util/sig"
@@ -16,7 +17,14 @@ import (
 
 const waybackHost = "https://web.archive.org"
 
+var envMode = env.WithDefault("ENV_MODE", "development")
+
 func main() {
+	var hostname = "http://localhost:3001"
+	if envMode == "production" {
+		hostname = "https://archive.bluepocket.org"
+	}
+
 	ctx := sig.ShutdownContext(context.Background())
 	archiveUrl, err := url.Parse(waybackHost)
 	errutil.InvariantError(err, "error building archive url")
@@ -33,7 +41,7 @@ func main() {
 			// l.Log.Info().
 			// 	Str("location", location).
 			// 	Msgf("Redirect: %v", res.StatusCode)
-			location = "http://localhost:3001?p=" + strings.Replace(location, waybackHost, "", 1)
+			location = hostname + "?p=" + strings.Replace(location, waybackHost, "", 1)
 			// l.Log.Info().Msgf("newLocation: %v", location)
 			res.Header.Set("location", location)
 		}
@@ -101,7 +109,9 @@ func main() {
 		l.Log.Err(err).Msg("Server shutdown")
 	}()
 
-	l.Log.Info().Msgf("Server up at http://localhost%s", srv.Addr)
+	l.Log.Info().
+		Str("addr", srv.Addr).
+		Msgf("Server up at %s", hostname)
 	err = srv.ListenAndServe()
 	if err != nil && errors.Is(err, http.ErrServerClosed) == false {
 		l.Log.Err(err).Msg("error starting server")

@@ -4,8 +4,8 @@ export type Article = {
   image?: string;
 } & ReturnType<Readability["parse"]>;
 
-const archiveSvcUrl = "http://localhost:3001";
-// const archiveSvcUrl = 'https://archive.bluepocket.org'
+// const archiveSvcUrl = "http://localhost:3001";
+const archiveSvcUrl = 'https://archive.bluepocket.org'
 
 export function fetchArticle(doc: Document, url: URL): Promise<Article> {
   return new Promise((resolve, reject) => {
