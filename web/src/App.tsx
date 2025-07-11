@@ -2,7 +2,7 @@ import styles from "./App.module.css";
 import { useSaveUrlMutation, useViewerQuery } from "./config/query";
 import { Sidebar } from "./components/Sidebar/Sidebar";
 import { Link, Route, Routes, useLocation } from "react-router";
-import { SavesPage } from "./routes/Saves/Saves";
+import { SaveItem, SavesPage } from "./routes/Saves/Saves";
 import { Suspense, useEffect } from "react";
 import { agent, resumeExistingSession } from "./config/atp";
 import { LoginPage } from "./routes/Login/Login";
@@ -11,7 +11,9 @@ import { LinkIcon } from "./icon/Link";
 import { isLink } from "./config/util";
 import { Toaster, toast } from "sonner";
 import { ReadPage } from "./routes/Read/Read";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { Modal } from "./components/Modal/Modal";
+import { fetchArticle } from "./config/article";
 
 export function App() {
   useSuspenseQuery({
@@ -32,6 +34,7 @@ export function App() {
   useEffect(() => {
     window.scrollTo({
       top: 0,
+      behavior: 'instant',
     });
   }, [location.key]);
 
@@ -54,32 +57,31 @@ function AuthenticatedApp() {
 
   return (
     <>
+      {isAddLinkOpen && (
+        <AddLinkInput
+          onClose={() => {
+            setAddLinkOpen(false);
+          }}
+        />
+      )}
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <Link to="/saves">
             <h1>BluePocket</h1>
           </Link>
           {/* <CommandMenu /> */}
-          {isAddLinkOpen ? (
-            <AddLinkInput
-              onClose={() => {
-                setAddLinkOpen(false);
-              }}
-            />
-          ) : (
-            <div className={styles.headerRight}>
-              <button
-                className={styles.linkBtn}
-                onClick={() => setAddLinkOpen(true)}
-              >
-                <LinkIcon height={24} />
-              </button>
-              <div
-                className={styles.profileBtn}
-                style={{ backgroundImage: `url(${avatar})` }}
-              ></div>
-            </div>
-          )}
+          <div className={styles.headerRight}>
+            <button
+              className={styles.linkBtn}
+              onClick={() => setAddLinkOpen(true)}
+            >
+              <LinkIcon height={24} />
+            </button>
+            <div
+              className={styles.profileBtn}
+              style={{ backgroundImage: `url(${avatar})` }}
+            ></div>
+          </div>
         </div>
       </header>
       <div className={styles.main}>
@@ -119,46 +121,84 @@ function AddLinkInput({ onClose }: { onClose: () => unknown }) {
   const maybeLink = isLink(val);
   const saveMutation = useSaveUrlMutation();
   const isPending = saveMutation.isPending;
+  const supportClipboard = navigator?.clipboard?.readText != null;
+  const preview = useQuery({
+    queryKey: ["AddLinkInputQuery", val],
+    queryFn: () => {
+      const url = URL.parse(val);
+      if (url == null) return null;
+      return fetchArticle(url);
+    },
+    enabled: maybeLink,
+  });
 
   return (
-    <form
-      className={styles.addLinkInput}
-      onSubmit={(ev) => {
-        ev.preventDefault();
-        const promise = saveMutation.mutateAsync(val).then(() => {
-          onClose();
-        });
+    <Modal title="Add Link" onClose={onClose}>
+      <form
+        className={styles.addLinkInput}
+        onSubmit={(ev) => {
+          ev.preventDefault();
+          const promise = saveMutation.mutateAsync(val).then(() => {
+            onClose();
+          });
 
-        toast.promise(promise, {
-          loading: "Saving Link...",
-          success: "Saved Link",
-          error: (err: Error) => {
-            return (
-              <>
-                <p>Error Saving Link</p>
-                <p>{err.message}</p>
-              </>
-            );
-          },
-        });
-      }}
-    >
-      <div className={styles.addLinkInputField}>
-        <LinkIcon className={styles.addLinkInputIcon} />
-        <input
-          // biome-ignore lint/a11y/noAutofocus: fine
-          autoFocus
-          value={val}
-          onChange={(ev) => {
-            setVal(ev.target.value);
-          }}
-          placeholder="Save a URL https://..."
-        />
-      </div>
-      <button disabled={!maybeLink || isPending}>Add</button>
-      <button type="button" onClick={onClose}>
-        X
-      </button>
-    </form>
+          toast.promise(promise, {
+            loading: "Saving Link...",
+            success: "Saved Link",
+            error: (err: Error) => {
+              return (
+                <>
+                  <p>Error Saving Link</p>
+                  <p>{err.message}</p>
+                </>
+              );
+            },
+          });
+        }}
+      >
+        <div className={styles.addLinkInputField}>
+          <LinkIcon className={styles.addLinkInputIcon} />
+          <input
+            // biome-ignore lint/a11y/noAutofocus: fine
+            autoFocus
+            value={val}
+            onChange={(ev) => {
+              setVal(ev.target.value);
+            }}
+            placeholder="Save a URL https://..."
+          />
+          {val === "" && supportClipboard && (
+            <button
+              type="button"
+              onClick={async () => {
+                navigator.clipboard
+                  .readText()
+                  .then((text) => {
+                    console.log(text);
+                    setVal(text);
+                  })
+                  .catch(() => {});
+              }}
+            >
+              Paste from Clipboard
+            </button>
+          )}
+        </div>
+        <button
+          disabled={!maybeLink || isPending}
+          className={styles.addLinkInputSaveBtn}
+        >
+          Add
+        </button>
+
+        {preview.data != null && (
+          <SaveItem
+            id="884324325"
+            title={preview.data.title ?? "Article"}
+            imageHref={preview.data.image}
+          />
+        )}
+      </form>
+    </Modal>
   );
 }

@@ -15,7 +15,7 @@ export function ExternalImage({ id, src, children, className }: Props) {
   const [render, setRender] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (src == null || src === '') return;
+    if (src == null || src === "") return;
 
     fetchImage(src)
       .catch((_err) => {
@@ -27,7 +27,7 @@ export function ExternalImage({ id, src, children, className }: Props) {
         }
       })
       .then((src) => {
-        if (src == null) return
+        if (src == null) return;
         // console.log("got image", src);
         setRender(src);
       });

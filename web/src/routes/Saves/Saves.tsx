@@ -6,8 +6,8 @@ import { ExternalImage } from "../../components/ExternalImage/ExternalImage";
 import type { LinkRecord } from "../../config/atp";
 
 export function SavesPage() {
-  const { collection } = useParams()
-  const saves = useSavesQuery(collection ?? 'saves');
+  const { collection } = useParams();
+  const saves = useSavesQuery(collection ?? "saves");
   console.log({ saves: saves });
 
   return (
@@ -24,20 +24,46 @@ export function SavesPage() {
     </div>
   );
 }
+
 function Item({ item, id }: { item: LinkRecord; id: string }) {
   const url = URL.parse(item.url);
 
   return (
-    <Link className={styles.item} to={`/read/${id}`}>
-      <ExternalImage src={item.imageHref} id={id} className={styles.itemImg}>
-        <div className={styles.itemContent}>
-          <p>{item.title}</p>
-          {/* <p>{item.excerpt}</p> */}
-          <div>
-            <div>{url?.host}</div>
-          </div>
-        </div>
-      </ExternalImage>
+    <Link to={`/read/${id}`}>
+      <SaveItem
+        id={id}
+        imageHref={item.imageHref}
+        title={item.title ?? "Article"}
+        host={url?.host}
+      />
     </Link>
+  );
+}
+
+export function SaveItem({
+  id,
+  imageHref,
+  title,
+  host,
+}: {
+  id: string;
+  imageHref?: string;
+  title: string;
+  host?: string;
+}) {
+  return (
+    <div className={styles.itemWrapper}>
+      <div className={styles.item}>
+        <ExternalImage src={imageHref} id={id} className={styles.itemImg}>
+          <div className={styles.itemContent}>
+            <p>{title}</p>
+            {/* <p>{item.excerpt}</p> */}
+            <div>
+              <div>{host}</div>
+            </div>
+          </div>
+        </ExternalImage>
+      </div>
+    </div>
   );
 }

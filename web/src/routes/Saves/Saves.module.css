@@ -12,6 +12,10 @@
   flex-wrap: wrap;
 }
 
+.itemWrapper {
+  display: flex;
+}
+
 .item {
   width: 260px;
   min-height: 220px;

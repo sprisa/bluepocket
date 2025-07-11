@@ -128,7 +128,7 @@ export function useSaveUrlMutation() {
 
 export function useArticleQuery(url: URL) {
   return useSuspenseQuery({
-    queryKey: ["saveQuery", url],
+    queryKey: ["articleQuery", url],
     queryFn: () => {
       return fetchArticle(url);
     },

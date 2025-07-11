@@ -58,7 +58,6 @@
   display: flex;
   gap: 32px;
   padding: 32px;
-  
 
   @media (max-width: 782px) {
     flex-direction: column;
@@ -80,7 +79,26 @@
   gap: 16px;
   align-items: center;
   justify-content: flex-end;
-  padding-left: 48px;
+  flex-direction: column;
+}
+
+.addLinkInputSaveBtn {
+  border-radius: 8px;
+  padding: 12px 16px;
+  background-color: var(--blue);
+  color: #fff;
+  width: 100%;
+
+  &:disabled {
+    background-color: hsl(from var(--blue) h s l / 0.5);
+  }
+}
+
+.addLinkInputField {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
 
   input {
     padding: 8px 16px;
@@ -94,22 +112,14 @@
   }
 
   button {
-    border-radius: 8px;
-    padding: 12px 16px;
-    background-color: var(--blue);
+    position: absolute;
+    right: 8px;
+    background-color: green;
     color: #fff;
-
-    &:disabled {
-      background-color: hsl(from var(--blue) h s l / 0.5);
-    }
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 14px;
   }
-}
-
-.addLinkInputField {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex: 1;
 }
 
 .addLinkInputIcon {

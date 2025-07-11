@@ -36,7 +36,7 @@
     gap: 8px;
 
     &::after {
-      content: '\2022';
+      content: "\2022";
     }
 
     &:last-child::after {
@@ -142,7 +142,8 @@
   img {
     max-width: 100%;
     object-fit: contain;
-    height: min-content;
+    height: auto;
+    /* height: min-content; */
     border-radius: 8px;
     /* box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 12px 0px; */
     margin: 16px 0;
