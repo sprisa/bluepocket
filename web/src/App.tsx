@@ -1,9 +1,9 @@
 import styles from "./App.module.css";
 import { useSaveUrlMutation, useViewerQuery } from "./config/query";
 import { Sidebar } from "./components/Sidebar/Sidebar";
-import { Link, Route, Routes } from "react-router";
+import { Link, Route, Routes, useLocation } from "react-router";
 import { SavesPage } from "./routes/Saves/Saves";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { agent, resumeExistingSession } from "./config/atp";
 import { LoginPage } from "./routes/Login/Login";
 import React from "react";
@@ -25,6 +25,15 @@ export function App() {
     () => true,
     agent.did != null
   );
+
+  const location = useLocation();
+  // Scroll to top on path change
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+    });
+  }, [location.key]);
 
   return (
     <div className={styles.body}>
