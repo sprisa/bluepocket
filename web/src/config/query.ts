@@ -135,8 +135,8 @@ export function useArticleQuery(url: URL) {
   });
 }
 
-export function useIsFavQuery(id: string) {
-  return useSuspenseQuery({
+export function favQuery(id: string) {
+  return {
     queryKey: ["favQuery", id],
     queryFn() {
       return agent.com.atproto.repo
@@ -153,12 +153,15 @@ export function useIsFavQuery(id: string) {
         });
     },
     retry: false,
-  });
+  } as const
 }
 
 export function useFavArticleMutation(id: string, link: LinkRecord) {
   return useMutation({
     mutationFn: (isFavorite: boolean) => {
+      link = {...link}
+      // @ts-expect-error
+      delete link.$type
       if (isFavorite) {
         return agent.com.atproto.repo.deleteRecord({
           repo: agent.assertDid,
@@ -180,9 +183,10 @@ export function useFavArticleMutation(id: string, link: LinkRecord) {
   });
 }
 
-export function useIsArchivedQuery(id: string) {
-  return useSuspenseQuery({
-    queryKey: ["isArchived", id],
+
+export function isArchivedQuery(id: string) {
+  return {
+        queryKey: ["isArchived", id],
     queryFn() {
       return agent.com.atproto.repo
         .getRecord({
@@ -198,12 +202,16 @@ export function useIsArchivedQuery(id: string) {
         });
     },
     retry: false,
-  });
+  } as const
 }
 
 export function useArchiveMutation(id: string, link: LinkRecord) {
   return useMutation({
     async mutationFn(archive: boolean) {
+      link = {...link}
+      // @ts-expect-error
+      delete link.$type
+
       if (archive === false) {
         await agent.com.atproto.repo.putRecord({
           repo: agent.assertDid,
