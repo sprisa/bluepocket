@@ -45,13 +45,15 @@ export const Collection = {
 
 export type LinkRecord = {
   url: string;
+  createdAt: string;
   title?: string;
   excerpt?: string;
   publishTime?: string;
   siteName?: string;
   textLength?: number;
   imageHref?: string;
-  createdAt: string;
+  byline?: string;
+  lang?: string;
 };
 
 export function makeLinkRecord(url: URL, article: Article): LinkRecord {
@@ -62,6 +64,8 @@ export function makeLinkRecord(url: URL, article: Article): LinkRecord {
     publishTime: article?.publishedTime ?? undefined,
     siteName: article?.siteName ?? undefined,
     textLength: article?.length ?? undefined,
+    byline: article?.byline ?? undefined,
+    lang: article?.lang ?? undefined,
     imageHref: article.image,
     createdAt: new Date().toISOString(),
   };

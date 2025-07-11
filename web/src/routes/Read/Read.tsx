@@ -40,7 +40,8 @@ export function ReadPage() {
           src={data.imageHref}
           className={styles.headerImg}
         />
-        <h1>{data.title}</h1>
+        <h1>{data.title ?? `Article from ${url.hostname}`}</h1>
+        {data.byline != null && <p>{data.byline}</p>}
         <div className={styles.headerTags}>
           {textLength != null && <p>{calcReadingTime(textLength)}</p>}
           <p>{url.hostname}</p>
@@ -91,21 +92,29 @@ function ArticleSection({ url }: { url: URL }) {
           hljs.highlightElement(node);
         }
 
+        // Fix anchor links
         const waybackPrefixRe = /\/web\/\w+\//;
         const aTags = ref.querySelectorAll("a");
         for (const node of aTags) {
           const a = node as HTMLAnchorElement;
+          // Open links in new tab
+          a.target = "_blank";
+
+          // Replace relative links back to original url
+          if (a.host === "archive.bluepocket.org") {
+            a.host = url.host;
+          }
+
           if (a.host === window.location.host) {
             // Sometime html will include malformed links
             if (waybackPrefixRe.test(a.pathname)) {
               a.href = a.pathname.replace(waybackPrefixRe, "");
             }
             // Fix plain anchor links.
-            // Typically Wikipedia
+            // Scroll to anchor in same page.
             else if (a.hash !== "") {
-              // a.href = `${data.url}${a.hash}`;
+              a.target = "";
             }
-            // console.dir(node);
           }
           // Remove Wayback links
           else if (a.host === "web.archive.org") {
@@ -114,9 +123,9 @@ function ArticleSection({ url }: { url: URL }) {
               ""
             );
           }
-          a.target = "_blank";
         }
 
+        // Fix images
         const imgTags = ref.querySelectorAll("img");
         for (const node of imgTags) {
           const img = node as HTMLImageElement;
@@ -124,6 +133,18 @@ function ArticleSection({ url }: { url: URL }) {
             let src = img.src.replace(window.location.origin, "");
             src = src.replace(waybackPrefixRe, "");
             img.src = src;
+          }
+
+          // Replace relative img urls with origin url
+          const archiveOrigin = "https://archive.bluepocket.org";
+          if (img.src.startsWith(archiveOrigin)) {
+            const src = img.src.replace(archiveOrigin, url.origin);
+            img.src = src;
+          }
+
+          // TODO: Support img srcset rewriting
+          if (img.srcset !== "") {
+            img.srcset = "";
           }
         }
       }}
