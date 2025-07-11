@@ -23,15 +23,13 @@ import { OutlinkIcon } from "../../icon/Outlink";
 import type { Article } from "../../config/article";
 import { makeLinkRecord } from "../../config/atp";
 
-const docBuffer = document.implementation.createHTMLDocument("read");
-
 export function ReadPage() {
   const params = useParams();
   const id = params.id!;
   const data = useLinkQuery(id);
   console.log({ data });
   const url = new URL(data.url);
-  const article = useArticleQuery(docBuffer, url);
+  const article = useArticleQuery(url);
   const content = article.data.content;
   const siteName = article.data.siteName ?? url.hostname;
   const textLength = article.data.length ?? data.textLength;

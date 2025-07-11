@@ -12,17 +12,19 @@ export const agent = new AtpAgent({
 });
 
 // Pull existing session, if any.
-const existingSession = localStorage.getItem("session");
-if (existingSession != null) {
-  try {
-    const session = JSON.parse(existingSession);
-    console.log("session", session);
-    const res = await agent.resumeSession(session);
-    if (res.success === false) {
+export async function resumeExistingSession() {
+  const existingSession = localStorage.getItem("session");
+  if (existingSession != null) {
+    try {
+      const session = JSON.parse(existingSession);
+      console.log("session", session);
+      const res = await agent.resumeSession(session);
+      if (res.success === false) {
+        localStorage.removeItem("session");
+      }
+    } catch (err) {
       localStorage.removeItem("session");
     }
-  } catch (err) {
-    localStorage.removeItem("session");
   }
 }
 

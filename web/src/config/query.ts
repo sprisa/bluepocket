@@ -85,10 +85,7 @@ export function useSaveUrlMutation() {
       if (url == null) return;
       url.searchParams.delete("utm_source");
       const rkey = sha256(url.href);
-      const article = await fetchArticle(
-        document.implementation.createHTMLDocument("tmp"),
-        url
-      );
+      const article = await fetchArticle(url);
       if (article?.title === "tmp") {
         delete article.title;
       }
@@ -122,18 +119,18 @@ export function useSaveUrlMutation() {
         throw err;
       });
     },
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       // const favorited = "cid" in data.data;
       // queryClient.setQueryData(["favQuery", id], favorited);
     },
   });
 }
 
-export function useArticleQuery(docBuffer: Document, url: URL) {
+export function useArticleQuery(url: URL) {
   return useSuspenseQuery({
     queryKey: ["saveQuery", url],
     queryFn: () => {
-      return fetchArticle(docBuffer, url);
+      return fetchArticle(url);
     },
   });
 }

@@ -7,7 +7,7 @@ export type Article = {
 // const archiveSvcUrl = "http://localhost:3001";
 const archiveSvcUrl = 'https://archive.bluepocket.org'
 
-export function fetchArticle(doc: Document, url: URL): Promise<Article> {
+export function fetchArticle(url: URL): Promise<Article> {
   return new Promise((resolve, reject) => {
     const req = new XMLHttpRequest();
     req.onload = () => {

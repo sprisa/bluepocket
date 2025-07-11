@@ -4,15 +4,23 @@ import { Sidebar } from "./components/Sidebar/Sidebar";
 import { Link, Route, Routes } from "react-router";
 import { SavesPage } from "./routes/Saves/Saves";
 import { Suspense } from "react";
-import { agent } from "./config/atp";
+import { agent, resumeExistingSession } from "./config/atp";
 import { LoginPage } from "./routes/Login/Login";
 import React from "react";
 import { LinkIcon } from "./icon/Link";
 import { isLink } from "./config/util";
 import { Toaster, toast } from "sonner";
 import { ReadPage } from "./routes/Read/Read";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export function App() {
+  useSuspenseQuery({
+    queryKey: ["resumeClient"],
+    async queryFn() {
+      await resumeExistingSession();
+      return null;
+    },
+  });
   const [isAuthenticated, setIsAuthenticated] = React.useReducer(
     () => true,
     agent.did != null
@@ -79,7 +87,10 @@ function AuthenticatedApp() {
                   <main className={styles.content}>
                     <Suspense>
                       <Routes>
-                        <Route path="saves/:collection?" element={<SavesPage />} />
+                        <Route
+                          path="saves/:collection?"
+                          element={<SavesPage />}
+                        />
                       </Routes>
                     </Suspense>
                   </main>

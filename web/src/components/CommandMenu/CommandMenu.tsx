@@ -2,11 +2,10 @@ import { Command } from "cmdk";
 import React from "react";
 import styles from "./styles.module.css";
 import { Root, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover";
-import { saveUrlMutation } from "../../config/query";
 import { isLink } from "../../config/util";
 
 export function CommandMenu() {
-  const [open, setOpen] = React.useState(false);
+  const [_open, setOpen] = React.useState(false);
 
   // Toggle the menu when ⌘K is pressed
   React.useEffect(() => {
@@ -62,10 +61,10 @@ export function CommandMenu() {
             <button
               disabled={!maybeLink}
               onClick={async () => {
-                const res = await saveUrlMutation(value);
+                // const res = await saveUrlMutation(value);
 
-                console.log(res);
-                setValue("");
+                // console.log(res);
+                // setValue("");
               }}
             >
               Add Link
