@@ -1,0 +1,88 @@
+.modal {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  min-height: 380px;
+  max-height: 100vh;
+  padding: 16px 32px;
+  overflow: scroll;
+
+  /* Touch screen devices */
+  @media only screen and (hover: none) {
+    /* top: unset; */
+    /* bottom: 0; */
+    height: calc(100vh - 64px);
+  }
+
+  border: 2px solid #fff;
+  background-color: rgba(255, 255, 255, 0.45);
+  /* Credit to: https://liquid-glass-eta.vercel.app/ */
+  --shadow-offset: 0;
+  --shadow-color: #ffffff;
+  --shadow-blur: 20px;
+  --shadow-spread: -5px;
+  --tint-color: 255, 255, 255;
+  --tint-opacity: 0.02;
+  --frost-blur: 10px;
+  --outer-shadow-blur: 24px;
+  border-radius: 28px;
+  isolation: isolate;
+  box-shadow: 0px 6px var(--outer-shadow-blur) rgba(0, 0, 0, 0.2);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 28px;
+    pointer-events: none;
+    box-shadow: inset var(--shadow-offset) var(--shadow-offset)
+      var(--shadow-blur) var(--shadow-spread) var(--shadow-color);
+    background-color: rgba(var(--tint-color), var(--tint-opacity));
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    inset: 0;
+    z-index: -1;
+    border-radius: 28px;
+    backdrop-filter: blur(var(--frost-blur));
+    filter: url(#glass-distortion);
+    isolation: isolate;
+    -webkit-backdrop-filter: blur(var(--frost-blur));
+    -webkit-filter: url(#glass-distortion);
+  }
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  border-bottom: 2px solid #fff;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  justify-content: space-between;
+  align-items: center;
+
+  p {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  button {
+    --size: 32px;
+    height: var(--size);
+    width: var(--size);
+    border-radius: var(--size);
+    background-color: var(--black);
+    border: 2px solid #fff;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

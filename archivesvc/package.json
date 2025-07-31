@@ -1,0 +1,10 @@
+{
+  "name": "archivesvc",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "docker:build": "docker build -t archivesvc .",
+    "docker:build:push": "docker buildx build --platform linux/amd64,linux/arm64 -t sprisa/bluepocket-archive-proxy:$(git rev-parse --short HEAD) --push ."
+  }
+}

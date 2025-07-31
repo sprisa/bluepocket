@@ -1,0 +1,107 @@
+.title {
+  font-size: 32px;
+  border-bottom: 1px solid rgb(204, 197, 184);
+  width: 100%;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.items {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.itemWrapper {
+  display: flex;
+}
+
+.item {
+  width: 260px;
+  min-height: 220px;
+  border-radius: 16px;
+  /* color: #fff; */
+  /* border: 2px solid #fff; */
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 12px 0px;
+  cursor: pointer;
+}
+
+.itemImg {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+
+  img {
+    height: auto;
+    width: 100%;
+    min-height: 140px;
+    max-height: 100%;
+    position: absolute;
+    top: 0;
+    object-fit: cover;
+  }
+}
+
+.itemContent {
+  flex: 1;
+  height: 87px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  display: flex;
+  justify-content: space-between;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  position: relative;
+  /* border: 2px solid #fff; */
+  background-color: rgba(255, 255, 255, 0.65);
+  /* Credit to: https://liquid-glass-eta.vercel.app/ */
+  --shadow-offset: 0;
+  --shadow-color: #ffffff;
+  --shadow-blur: 20px;
+  --shadow-spread: -5px;
+  --tint-color: 255, 255, 255;
+  --tint-opacity: 0.02;
+  --frost-blur: 10px;
+  --outer-shadow-blur: 24px;
+  /* border-radius: 28px; */
+  isolation: isolate;
+  box-shadow: 0px 6px var(--outer-shadow-blur) rgba(0, 0, 0, 0.2);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    /* border-radius: 28px; */
+    pointer-events: none;
+    box-shadow: inset var(--shadow-offset) var(--shadow-offset)
+      var(--shadow-blur) var(--shadow-spread) var(--shadow-color);
+    background-color: rgba(var(--tint-color), var(--tint-opacity));
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    inset: 0;
+    z-index: -1;
+    /* border-radius: 28px; */
+    backdrop-filter: blur(var(--frost-blur));
+    /* filter: url(#glass-distortion); */
+    isolation: isolate;
+    /* -webkit-backdrop-filter: blur(var(--frost-blur));
+    -webkit-filter: url(#glass-distortion); */
+  }
+
+  p {
+    max-height: 40px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

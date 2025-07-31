@@ -1,0 +1,24 @@
+export function LinkIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 256 256" {...props}>
+      <title>Link</title>
+      <path fill="none" d="M0 0h256v256H0z" />
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={16}
+        d="m141.38 64.68 11-11a46.62 46.62 0 0 1 65.94 0h0a46.62 46.62 0 0 1 0 65.94L193.94 144l-10.34 10.34a46.63 46.63 0 0 1-66-.05h0a46.48 46.48 0 0 1-13.6-34.23"
+      />
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={16}
+        d="m114.62 191.32-11 11a46.63 46.63 0 0 1-66-.05h0a46.63 46.63 0 0 1 .06-65.89l34.72-34.72a46.62 46.62 0 0 1 65.94 0h0A46.45 46.45 0 0 1 152 135.94"
+      />
+    </svg>
+  );
+}
